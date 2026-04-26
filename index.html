@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f7f5" />
+    <title>memora</title>
+    <link rel="icon" type="image/png" href="./assets/memora-mark.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <div class="sidebar-top">
+          <button class="brand" data-view="all" aria-label="mem ora home">
+            <span class="brand-mark"><img src="./assets/memora-mark.png" alt="" aria-hidden="true" /></span>
+            <span class="brand-word">mem<span>·</span>ora</span>
+          </button>
+          <button class="search-trigger" type="button" data-open-search>
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"></circle>
+              <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></line>
+            </svg>
+            <span>Search entries</span>
+            <kbd>⌘K</kbd>
+          </button>
+        </div>
+
+        <div class="nav-section">Library</div>
+        <nav class="nav-list" id="view-nav">
+          <button class="nav-item active" type="button" data-view="all">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect>
+              <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect>
+              <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect>
+              <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect>
+            </svg>
+            <span>All entries</span>
+          </button>
+          <button class="nav-item" type="button" data-view="today">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.3"></rect>
+              <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></line>
+              <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></line>
+              <line x1="1" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1.3"></line>
+            </svg>
+            <span>Today</span>
+          </button>
+          <button class="nav-item" type="button" data-view="projects">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <path d="M1 4h14M1 8h10M1 12h7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path>
+            </svg>
+            <span>Projects</span>
+          </button>
+          <button class="nav-item" type="button" data-view="timeline">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"></circle>
+              <path d="M8 4.5V8.5l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>Timeline</span>
+          </button>
+          <button class="nav-item" type="button" data-view="reflect">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path>
+              <path d="M10 2h4v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>Reflect</span>
+          </button>
+          <button class="nav-item" type="button" data-view="archive">
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <path d="M2 5h12v8.5A1.5 1.5 0 0 1 12.5 15h-9A1.5 1.5 0 0 1 2 13.5V5Z" stroke="currentColor" stroke-width="1.3"></path>
+              <path d="M1.5 2h13v3h-13zM6 8h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <span>Archive</span>
+          </button>
+        </nav>
+
+        <div class="nav-section">Tags</div>
+        <div class="tag-cloud" id="tag-cloud"></div>
+        <div class="sidebar-tools">
+          <button class="ghost-button compact full" type="button" data-manage-tags>Manage tags</button>
+        </div>
+
+        <div class="sidebar-bottom">
+          <button class="primary-button" type="button" data-new-entry>
+            <svg aria-hidden="true" width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <line x1="8" y1="2" x2="8" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+              <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+            </svg>
+            <span>New entry</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <div class="topbar-title-row">
+              <img src="./assets/memora-mark.png" alt="" aria-hidden="true" />
+              <h1 id="view-title">All entries</h1>
+            </div>
+            <p id="view-subtitle"></p>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button hide-desktop" type="button" data-toggle-sidebar aria-label="Toggle sidebar">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+            </button>
+            <button class="ghost-button compact" type="button" data-open-onboarding>Guide</button>
+            <button class="ghost-button compact" type="button" data-open-cloud>
+              <span class="sync-dot" id="sync-dot"></span>
+              <span id="sync-label">Local</span>
+            </button>
+            <div class="segmented" aria-label="Layout">
+              <button class="segment active" type="button" data-layout="list">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <line x1="1" y1="3" x2="13" y2="3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></line>
+                  <line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></line>
+                  <line x1="1" y1="11" x2="13" y2="11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></line>
+                </svg>
+                <span>List</span>
+              </button>
+              <button class="segment" type="button" data-layout="grid">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect>
+                  <rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect>
+                  <rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect>
+                  <rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect>
+                </svg>
+                <span>Grid</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <section class="content" id="content" tabindex="-1"></section>
+      </main>
+    </div>
+
+    <div class="modal" id="entry-modal" aria-hidden="true">
+      <div class="modal-card entry-editor" role="dialog" aria-modal="true" aria-labelledby="entry-modal-title">
+        <header class="modal-head">
+          <h2 id="entry-modal-title">New entry</h2>
+          <button class="icon-button" type="button" data-close-modal aria-label="Close">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </button>
+        </header>
+        <form id="entry-form" class="modal-body">
+          <input type="hidden" id="entry-id" />
+          <label class="field">
+            <span>Title</span>
+            <input id="entry-title" name="title" autocomplete="off" required placeholder="Give this memory a name" />
+          </label>
+          <label class="field">
+            <span>Content</span>
+            <textarea id="entry-content" name="content" rows="8" required placeholder="What's on your mind..."></textarea>
+          </label>
+          <div class="form-grid">
+            <label class="field">
+              <span>Type</span>
+              <select id="entry-type" name="type">
+                <option>Thought</option>
+                <option>Idea</option>
+                <option>Note</option>
+                <option>Meeting</option>
+                <option>Journal</option>
+                <option>Learning</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Project</span>
+              <input id="entry-project" name="project" autocomplete="off" placeholder="Optional" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Tags</span>
+            <input id="entry-tags" name="tags" autocomplete="off" placeholder="idea, work, learn" />
+          </label>
+          <footer class="modal-actions">
+            <button class="danger-button" id="delete-entry" type="button">Delete</button>
+            <button class="ghost-button" id="export-entry" type="button">Export PDF</button>
+            <button class="ghost-button" type="button" data-close-modal>Cancel</button>
+            <button class="primary-button compact" type="submit">Save</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="reader-modal" aria-hidden="true">
+      <article class="modal-card reader-card" role="dialog" aria-modal="true" aria-labelledby="reader-title">
+        <header class="modal-head">
+          <p id="reader-kind">Entry</p>
+          <div class="reader-actions">
+            <button class="ghost-button compact" type="button" data-export-current>Export PDF</button>
+            <button class="ghost-button compact" type="button" data-edit-current>Edit</button>
+            <button class="ghost-button compact" type="button" data-archive-current>Archive</button>
+            <button class="danger-button compact reader-delete" type="button" data-delete-current>Delete</button>
+            <button class="icon-button" type="button" data-close-reader aria-label="Close">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+            </button>
+          </div>
+        </header>
+        <div class="reader-body">
+          <h2 id="reader-title"></h2>
+          <p id="reader-meta"></p>
+          <div id="reader-content"></div>
+          <div class="entry-tags" id="reader-tags"></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="modal search-modal" id="search-modal" aria-hidden="true">
+      <div class="modal-card search-card" role="dialog" aria-modal="true" aria-label="Search memories">
+        <div class="search-box">
+          <svg aria-hidden="true" width="17" height="17" viewBox="0 0 16 16" fill="none">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"></circle>
+            <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></line>
+          </svg>
+          <input id="search-input" placeholder="Search your memory..." autocomplete="off" />
+        </div>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+
+    <div class="modal" id="manager-modal" aria-hidden="true">
+      <div class="modal-card manager-card" role="dialog" aria-modal="true" aria-labelledby="manager-title">
+        <header class="modal-head">
+          <h2 id="manager-title">Manage</h2>
+          <button class="icon-button" type="button" data-close-manager aria-label="Close">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </button>
+        </header>
+        <div class="modal-body" id="manager-body"></div>
+      </div>
+    </div>
+
+    <div class="modal" id="cloud-modal" aria-hidden="true">
+      <div class="modal-card manager-card" role="dialog" aria-modal="true" aria-labelledby="cloud-title">
+        <header class="modal-head">
+          <h2 id="cloud-title">Cloud sync</h2>
+          <button class="icon-button" type="button" data-close-cloud aria-label="Close">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="cloud-status" id="cloud-status"></div>
+          <form class="cloud-config" id="cloud-config-form">
+            <label class="field">
+              <span>Supabase project URL</span>
+              <input id="supabase-url" autocomplete="off" placeholder="https://your-project.supabase.co" />
+            </label>
+            <label class="field">
+              <span>Supabase anon key</span>
+              <input id="supabase-anon-key" autocomplete="off" placeholder="eyJ..." />
+            </label>
+            <button class="primary-button compact" type="submit">Save cloud settings</button>
+          </form>
+          <div class="cloud-auth">
+            <button class="ghost-button" type="button" data-oauth-provider="google">Continue with Google</button>
+            <button class="ghost-button" type="button" data-oauth-provider="apple">Continue with Apple</button>
+          </div>
+          <form class="cloud-auth-form" data-email-auth-form>
+            <input id="auth-email" type="email" placeholder="Email address" autocomplete="email" />
+            <button class="ghost-button" type="submit">Send email link</button>
+          </form>
+          <form class="cloud-auth-form" data-phone-auth-form>
+            <input id="auth-phone" type="tel" placeholder="Phone number with country code" autocomplete="tel" />
+            <button class="ghost-button" type="submit">Send phone OTP</button>
+          </form>
+          <form class="cloud-auth-form" data-verify-phone-form>
+            <input id="auth-phone-otp" inputmode="numeric" placeholder="Phone OTP code" />
+            <button class="ghost-button" type="submit">Verify phone OTP</button>
+          </form>
+          <div class="cloud-actions">
+            <button class="ghost-button compact" type="button" data-sync-now>Sync now</button>
+            <button class="danger-button compact reader-delete" type="button" data-sign-out>Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="onboarding-screen" id="onboarding-modal" aria-hidden="true" aria-labelledby="onboarding-title">
+      <div class="onboarding-shell">
+        <div class="onboarding-hero">
+          <div class="onboarding-brand">
+            <span class="onboarding-brand-mark"><img src="./assets/memora-mark.png" alt="" aria-hidden="true" /></span>
+            <span class="onboarding-brand-word">mem<span>·</span>ora</span>
+          </div>
+          <p class="section-kicker">Private memory library</p>
+          <h2 id="onboarding-title">A calmer place to capture, organise, and return to your thoughts.</h2>
+          <p id="onboarding-copy">
+            Build a second brain that feels quiet enough for daily notes and structured enough for long-term memory.
+          </p>
+          <div class="onboarding-features">
+            <article>
+              <span>01</span>
+              <h3>Capture without friction</h3>
+              <p>Save thoughts, meetings, journal notes, and learning fragments with tags and project context.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Organise as you go</h3>
+              <p>Edit entries, rename tags, move notes across projects, and keep your library flexible.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Reflect and resurface</h3>
+              <p>Search instantly, browse a timeline, and revisit older memories when they become useful again.</p>
+            </article>
+          </div>
+        </div>
+        <aside class="onboarding-auth">
+          <div class="mini-app" aria-hidden="true">
+            <div class="mini-sidebar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="mini-main">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div class="onboarding-auth-card">
+            <img class="auth-logo" src="./assets/memora-mark.png" alt="" aria-hidden="true" />
+            <p class="section-kicker">Start syncing</p>
+            <h3>Create your profile</h3>
+            <p>Sign up or sign in to sync your memory library with memora cloud. Your profile is created automatically after login.</p>
+            <div class="cloud-status" id="onboarding-cloud-status"></div>
+            <div class="onboarding-auth-actions">
+              <button class="primary-button compact" type="button" data-oauth-provider="google">Sign up with Google</button>
+              <button class="ghost-button" type="button" data-oauth-provider="apple">Sign up with Apple</button>
+            </div>
+            <form class="cloud-auth-form onboarding-email" data-email-auth-form>
+              <input id="onboarding-auth-email" type="email" placeholder="Email address" autocomplete="email" />
+              <button class="ghost-button" type="submit">Email sign in</button>
+            </form>
+            <form class="cloud-auth-form onboarding-phone" data-phone-auth-form>
+              <input id="onboarding-auth-phone" type="tel" placeholder="Phone number" autocomplete="tel" />
+              <button class="ghost-button" type="submit">Phone sign in</button>
+            </form>
+            <button class="ghost-button full" type="button" data-open-cloud>Review cloud settings</button>
+            <button class="ghost-button full" type="button" data-skip-onboarding>Continue locally</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
