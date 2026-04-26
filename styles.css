@@ -1871,3 +1871,191 @@ kbd {
     max-height: calc(100vh - 20px);
   }
 }
+
+/* ============================================================
+   PWA + Native Mobile Enhancements
+   ============================================================ */
+
+/* Pull-to-refresh indicator */
+.ptr-indicator {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-top: -56px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 0 2px 16px rgba(26, 25, 23, .16);
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: margin-top .22s ease, opacity .18s ease;
+  pointer-events: none;
+}
+
+.ptr-indicator.ptr-visible {
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.ptr-indicator.ptr-ready {
+  background: var(--accent2);
+}
+
+.ptr-indicator svg {
+  color: var(--accent);
+}
+
+/* Bottom navigation bar — hidden on desktop */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  /* ---- Bottom nav ---- */
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    align-items: stretch;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    border-top: 1px solid var(--border);
+    background: rgba(248, 247, 245, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--ink3);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .01em;
+    cursor: pointer;
+    padding: 6px 4px;
+    -webkit-tap-highlight-color: transparent;
+    transition: color .12s ease, opacity .1s ease;
+  }
+
+  .bottom-nav-item:active {
+    opacity: 0.65;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--accent);
+  }
+
+  .bottom-nav-item svg {
+    flex: 0 0 auto;
+  }
+
+  /* Centre FAB-style New button */
+  .bottom-nav-new {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 56px;
+    width: 48px;
+    height: 48px;
+    margin: auto;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(44, 95, 74, .42);
+    transition: transform .12s ease, opacity .1s ease;
+  }
+
+  .bottom-nav-new:active {
+    transform: scale(0.92);
+    opacity: 1;
+  }
+
+  /* ---- Safe-area: topbar ---- */
+  .topbar {
+    padding-top: max(env(safe-area-inset-top, 0px), 0px);
+  }
+
+  /* ---- Content clearance for bottom nav ---- */
+  .content {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
+  /* ---- Toast above bottom nav ---- */
+  .toast {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 14px);
+  }
+
+  /* ---- Touch targets: 44px minimum ---- */
+  .primary-button,
+  .ghost-button,
+  .danger-button,
+  .icon-button,
+  .segment {
+    min-height: 44px;
+  }
+
+  .nav-item,
+  .search-trigger {
+    min-height: 44px;
+  }
+}
+
+/* ---- Modal slide-up sheet on small screens ---- */
+@media (max-width: 560px) {
+  .modal:not(.search-modal) {
+    align-items: flex-end;
+    padding: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .modal:not(.search-modal) .modal-card {
+    width: 100%;
+    max-height: calc(96vh - env(safe-area-inset-top, 0px));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .modal:not(.search-modal).open .modal-card {
+    animation: memoraSlideUp .22s ease;
+  }
+
+  @keyframes memoraSlideUp {
+    from { transform: translateY(56px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  /* Pull handle hint on sheet modals */
+  .modal:not(.search-modal) .modal-head::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border2);
+    transform: translateX(-50%);
+  }
+
+  .modal:not(.search-modal) .modal-head {
+    position: relative;
+    padding-top: 22px;
+  }
+}

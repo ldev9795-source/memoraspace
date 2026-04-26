@@ -1,0 +1,25 @@
+{
+  "name": "mem·ora",
+  "short_name": "memora",
+  "description": "A calmer place to capture, organise, and return to your thoughts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f5",
+  "theme_color": "#2c5f4a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./assets/memora-mark.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/memora-mark.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en"
+}

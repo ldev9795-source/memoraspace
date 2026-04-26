@@ -753,6 +753,7 @@ function saveEntry(event) {
       entry.id === id ? { ...entry, title, content, type, project, tags, updatedAt: new Date().toISOString() } : entry
     );
     toast("Entry updated");
+    haptic([10]);
   } else {
     state.entries.unshift({
       id: crypto.randomUUID(),
@@ -765,6 +766,7 @@ function saveEntry(event) {
       updatedAt: new Date().toISOString()
     });
     toast("Entry saved");
+    haptic([10]);
   }
 
   persist();
@@ -789,6 +791,7 @@ function deleteEntryById(id) {
   closeModal(elements.readerModal);
   render();
   toast("Entry deleted");
+  haptic([15, 10, 15]);
 }
 
 function moveEntryToProject(id, project) {
@@ -816,6 +819,7 @@ function toggleArchiveEntry(id) {
   persist();
   render();
   toast(archivedAt ? "Entry archived" : "Entry restored");
+  haptic([8]);
   return true;
 }
 
@@ -1721,7 +1725,7 @@ document.addEventListener("click", async (event) => {
   }
 
   if (event.target.closest("[data-export-current]")) {
-    await exportEntryAsPdf(state.activeReaderId);
+    await shareOrExport(state.activeReaderId);
   }
 
   if (event.target.closest("[data-delete-current]")) {
@@ -1843,3 +1847,135 @@ document.querySelector("#view-nav").addEventListener("click", (event) => {
 render();
 initCloud();
 maybeOpenOnboarding();
+
+// ============================================================
+// PWA + Native Mobile Enhancements
+// ============================================================
+
+function haptic(pattern = [10]) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+async function shareOrExport(id) {
+  const entry = state.entries.find((item) => item.id === id);
+  if (!entry) return;
+
+  if (navigator.share && window.matchMedia("(max-width: 820px)").matches) {
+    try {
+      await navigator.share({
+        title: entry.title,
+        text: entry.content.slice(0, 300) + (entry.content.length > 300 ? "…" : ""),
+        url: window.location.href
+      });
+      return;
+    } catch {
+      // user cancelled — fall through to PDF
+    }
+  }
+  await exportEntryAsPdf(id);
+}
+
+// View order for swipe navigation
+const SWIPE_VIEWS = ["all", "today", "projects", "timeline", "reflect", "archive"];
+
+// Touch state
+const touch = { startX: 0, startY: 0, active: false };
+
+document.addEventListener("touchstart", (event) => {
+  if (event.target.closest("input, textarea, select")) return;
+  touch.startX = event.touches[0].clientX;
+  touch.startY = event.touches[0].clientY;
+  touch.active = true;
+}, { passive: true });
+
+document.addEventListener("touchend", (event) => {
+  if (!touch.active) return;
+  touch.active = false;
+
+  const dx = event.changedTouches[0].clientX - touch.startX;
+  const dy = event.changedTouches[0].clientY - touch.startY;
+  const absDx = Math.abs(dx);
+  const absDy = Math.abs(dy);
+
+  const anyModalOpen = document.querySelector(".modal.open");
+
+  if (anyModalOpen) {
+    // Swipe down to dismiss modal sheet on small screens
+    if (dy > 90 && absDx < 60 && window.matchMedia("(max-width: 560px)").matches) {
+      closeModal(anyModalOpen);
+      haptic([8]);
+    }
+    return;
+  }
+
+  // Swipe from left edge → open sidebar
+  if (touch.startX < 28 && dx > 60 && absDy < 80) {
+    document.body.classList.add("sidebar-open");
+    haptic([8]);
+    return;
+  }
+
+  // Swipe left on open sidebar → close it
+  if (document.body.classList.contains("sidebar-open") && dx < -50 && absDy < 80) {
+    document.body.classList.remove("sidebar-open");
+    haptic([8]);
+    return;
+  }
+
+  // Horizontal swipe on main content → navigate between views
+  if (absDx > 72 && absDx > absDy * 1.6 && !document.body.classList.contains("sidebar-open")) {
+    const currentIndex = SWIPE_VIEWS.indexOf(state.view);
+    if (dx < 0 && currentIndex < SWIPE_VIEWS.length - 1) {
+      state.view = SWIPE_VIEWS[currentIndex + 1];
+      state.activeTag = "";
+      render();
+      haptic([6]);
+    } else if (dx > 0 && currentIndex > 0) {
+      state.view = SWIPE_VIEWS[currentIndex - 1];
+      state.activeTag = "";
+      render();
+      haptic([6]);
+    }
+  }
+}, { passive: true });
+
+// Pull-to-refresh
+const ptrEl = document.createElement("div");
+ptrEl.className = "ptr-indicator";
+ptrEl.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.5 2v6h-6"/><path d="M2.5 12A10 10 0 0 1 18.46 5.46L21.5 8M2.5 22v-6h6"/><path d="M21.5 12A10 10 0 0 1 5.54 18.54L2.5 16"/></svg>`;
+document.body.appendChild(ptrEl);
+
+let ptrStartY = 0;
+let ptrActive = false;
+
+elements.content.addEventListener("touchstart", (event) => {
+  if (elements.content.scrollTop === 0) {
+    ptrStartY = event.touches[0].clientY;
+    ptrActive = true;
+  }
+}, { passive: true });
+
+elements.content.addEventListener("touchmove", (event) => {
+  if (!ptrActive) return;
+  const dy = event.touches[0].clientY - ptrStartY;
+  if (dy > 12) {
+    ptrEl.classList.add("ptr-visible");
+    ptrEl.classList.toggle("ptr-ready", dy > 64);
+  }
+}, { passive: true });
+
+elements.content.addEventListener("touchend", (event) => {
+  if (!ptrActive) return;
+  ptrActive = false;
+  const dy = event.changedTouches[0].clientY - ptrStartY;
+  if (dy > 64) {
+    haptic([10, 20, 10]);
+    if (state.cloudUser) {
+      syncNow();
+    } else {
+      render();
+      toast("Refreshed");
+    }
+  }
+  ptrEl.classList.remove("ptr-visible", "ptr-ready");
+}, { passive: true });
