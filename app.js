@@ -814,6 +814,9 @@ function toggleArchiveEntry(id) {
 
   if (state.activeReaderId === id && document.querySelector("[data-archive-current]")) {
     document.querySelector("[data-archive-current]").textContent = archivedAt ? "Unarchive" : "Archive";
+    document.querySelectorAll("[data-archive-label]").forEach((el) => {
+      el.textContent = archivedAt ? "Unarchive" : "Archive";
+    });
   }
 
   persist();
@@ -911,6 +914,9 @@ function openReader(id) {
   document.querySelector("#reader-content").textContent = entry.content;
   document.querySelector("#reader-tags").innerHTML = entry.tags.map(renderTag).join("");
   document.querySelector("[data-archive-current]").textContent = entry.archivedAt ? "Unarchive" : "Archive";
+  document.querySelectorAll("[data-archive-label]").forEach((el) => {
+    el.textContent = entry.archivedAt ? "Unarchive" : "Archive";
+  });
   openModal(elements.readerModal);
 }
 

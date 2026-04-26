@@ -210,12 +210,12 @@
             <button class="ghost-button compact" type="button" data-edit-current>Edit</button>
             <button class="ghost-button compact" type="button" data-archive-current>Archive</button>
             <button class="danger-button compact reader-delete" type="button" data-delete-current>Delete</button>
-            <button class="icon-button" type="button" data-close-reader aria-label="Close">
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-              </svg>
-            </button>
           </div>
+          <button class="icon-button" type="button" data-close-reader aria-label="Close">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </button>
         </header>
         <div class="reader-body">
           <h2 id="reader-title"></h2>
@@ -223,6 +223,32 @@
           <div id="reader-content"></div>
           <div class="entry-tags" id="reader-tags"></div>
         </div>
+        <footer class="reader-toolbar">
+          <button class="reader-toolbar-btn" type="button" data-export-current aria-label="Share">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+            <span>Share</span>
+          </button>
+          <button class="reader-toolbar-btn" type="button" data-edit-current aria-label="Edit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>Edit</span>
+          </button>
+          <button class="reader-toolbar-btn" type="button" data-archive-current aria-label="Archive">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/>
+            </svg>
+            <span data-archive-label>Archive</span>
+          </button>
+          <button class="reader-toolbar-btn danger" type="button" data-delete-current aria-label="Delete">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+            <span>Delete</span>
+          </button>
+        </footer>
       </article>
     </div>
 
