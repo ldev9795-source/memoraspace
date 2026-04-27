@@ -425,6 +425,7 @@ function renderEntryList(entries) {
       `}
       <div class="section-head">
         <h2>${label}</h2>
+        ${!isHome ? renderLayoutToggle() : ""}
       </div>
       ${
         entries.length
@@ -497,6 +498,16 @@ function renderEmptyState() {
       <button class="primary-button compact" type="button" data-new-entry>New entry</button>
     </div>
   `;
+}
+
+function renderLayoutToggle() {
+  const listIcon = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><line x1="1" y1="2.5" x2="13" y2="2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="11.5" x2="13" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  const gridIcon = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="5.2" height="5.2" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="7.8" y="1" width="5.2" height="5.2" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="1" y="7.8" width="5.2" height="5.2" rx="1.2" stroke="currentColor" stroke-width="1.4"/><rect x="7.8" y="7.8" width="5.2" height="5.2" rx="1.2" stroke="currentColor" stroke-width="1.4"/></svg>`;
+  return `
+    <div class="layout-toggle" role="group" aria-label="Layout">
+      <button class="layout-btn${state.layout === "list" ? " active" : ""}" type="button" data-layout="list" aria-label="List view">${listIcon}</button>
+      <button class="layout-btn${state.layout === "grid" ? " active" : ""}" type="button" data-layout="grid" aria-label="Grid view">${gridIcon}</button>
+    </div>`;
 }
 
 function renderHomeHeader() {
@@ -605,7 +616,13 @@ function renderToday() {
           </div>
         </aside>
       </div>
-      <div class="section-head"><h2>Today's entries</h2><span class="muted">${entries.length} ${entries.length === 1 ? "memory" : "memories"}</span></div>
+      <div class="section-head">
+        <h2>Today's entries</h2>
+        <div class="section-head-right">
+          <span class="muted">${entries.length} ${entries.length === 1 ? "memory" : "memories"}</span>
+          ${renderLayoutToggle()}
+        </div>
+      </div>
       ${
         entries.length
           ? `<div class="entries today-entries ${state.layout === "grid" ? "grid" : ""}">${entries.map(renderEntryButton).join("")}</div>`
@@ -789,7 +806,13 @@ function renderReflect() {
         <div class="stat"><span>tags used</span><strong>${stats.tags}</strong></div>
         <div class="stat"><span>most active month</span><strong>${mostActiveMonth()}</strong></div>
       </div>
-      <div class="section-head"><h2>Random resurface</h2><span class="muted">from your archive</span></div>
+      <div class="section-head">
+        <h2>Random resurface</h2>
+        <div class="section-head-right">
+          <span class="muted">from your archive</span>
+          ${renderLayoutToggle()}
+        </div>
+      </div>
       ${
         random
           ? `<div class="entries reflect-entries ${state.layout === "grid" ? "grid" : ""}">${
