@@ -1831,20 +1831,47 @@ function drawPdfContinuationHeader(doc, page, margin, logoData, entry, pageNumbe
 }
 
 function drawPdfSignature(doc, page, margin, userName) {
+  const sigTop = page.height - 168;
+
+  // Section rule
   doc.setDrawColor(232, 228, 223);
-  doc.line(margin, page.height - 136, page.width - margin, page.height - 136);
+  doc.setLineWidth(0.5);
+  doc.line(margin, sigTop, page.width - margin, sigTop);
+
+  // Label
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setTextColor(44, 95, 74);
-  doc.text("PERSONAL MEMORY SIGNATURE", margin, page.height - 106);
+  doc.text("PERSONAL MEMORY SIGNATURE", margin, sigTop + 22);
+
+  // Signature name — large italic serif mimics cursive handwriting
   doc.setFont("times", "italic");
-  doc.setFontSize(28);
+  doc.setFontSize(40);
   doc.setTextColor(26, 25, 23);
-  doc.text(userName, margin, page.height - 72);
+  const displayName = userName || "memora user";
+  doc.text(displayName, margin, sigTop + 74);
+
+  // Handwritten underline stroke beneath the signature
+  doc.setFont("times", "italic");
+  doc.setFontSize(40);
+  const nameWidth = doc.getTextWidth(displayName);
+  const lineEnd = Math.min(margin + nameWidth + 6, page.width - margin - 40);
+  doc.setDrawColor(26, 25, 23);
+  doc.setLineWidth(1.0);
+  // Slightly angled stroke for a natural pen-like feel
+  doc.line(margin, sigTop + 80, lineEnd, sigTop + 78);
+  // Tiny tail on the left like a pen lift
+  doc.setLineWidth(0.5);
+  doc.line(margin - 2, sigTop + 80, margin + 6, sigTop + 82);
+  doc.setLineWidth(0.2);
+
+  // Footer row — "Created with mem·ora" left, date right
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setTextColor(159, 153, 145);
-  doc.text("Created with memora", margin, page.height - 52);
+  const dateStr = new Date().toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" });
+  doc.text("Created with mem·ora", margin, sigTop + 104);
+  doc.text(dateStr, page.width - margin, sigTop + 104, { align: "right" });
 }
 
 function getUserDisplayName() {
@@ -1854,6 +1881,7 @@ function getUserDisplayName() {
     state.cloudUser?.user_metadata?.name ||
     state.cloudUser?.email?.split("@")[0] ||
     state.cloudUser?.phone ||
+    localStorage.getItem("memora.localName") ||
     "memora user"
   );
 }
@@ -1885,9 +1913,11 @@ function openPrintablePdfFallback(entry) {
           .meta { color: #65615c; font: 12px Arial, sans-serif; line-height: 1.7; border-bottom: 1px solid #e8e4df; padding-bottom: 18px; margin-bottom: 28px; }
           .content { color: #46433f; font-size: 16px; line-height: 1.8; }
           .footer { position: fixed; bottom: 15mm; right: 20mm; color: #9f9991; font: 11px Arial, sans-serif; }
-          .signature { margin-top: 72px; border-top: 1px solid #e8e4df; padding-top: 24px; }
-          .signature strong { color: #2c5f4a; font: 700 10px Arial, sans-serif; letter-spacing: .08em; }
-          .signature div { margin-top: 14px; font: italic 34px Georgia, serif; }
+          .signature { margin-top: 72px; border-top: 1px solid #e8e4df; padding-top: 28px; }
+          .signature strong { color: #2c5f4a; font: 700 9px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+          .sig-name { margin: 14px 0 0; font: italic 46px Georgia, serif; color: #1a1917; line-height: 1; }
+          .sig-line { display: block; width: min(320px, 80%); height: 1px; background: #1a1917; margin-top: 6px; }
+          .sig-footer { margin-top: 16px; display: flex; justify-content: space-between; color: #9f9991; font: 9px Arial, sans-serif; }
         </style>
       </head>
       <body>
@@ -1906,7 +1936,15 @@ function openPrintablePdfFallback(entry) {
                 <div class="content">${escapeHtml(chunk.join(" "))}</div>
                 ${
                   index === chunks.length - 1
-                    ? `<div class="signature"><strong>PERSONAL MEMORY SIGNATURE</strong><div>${escapeHtml(userName)}</div><p>Created with memora</p></div>`
+                    ? `<div class="signature">
+                        <strong>Personal Memory Signature</strong>
+                        <p class="sig-name">${escapeHtml(userName)}</p>
+                        <span class="sig-line"></span>
+                        <div class="sig-footer">
+                          <span>Created with mem·ora</span>
+                          <span>${new Date().toLocaleDateString([], { day: "numeric", month: "long", year: "numeric" })}</span>
+                        </div>
+                       </div>`
                     : ""
                 }
                 <div class="footer">Page ${index + 1} of ${chunks.length}</div>
