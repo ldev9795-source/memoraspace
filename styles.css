@@ -1936,58 +1936,78 @@ kbd {
 .capture-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: calc(100% - 44px);
   margin: 14px 22px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
   background: var(--bg);
-  box-shadow: 0 2px 10px rgba(26, 25, 23, .06);
-  cursor: pointer;
-  padding: 13px 14px;
-  text-align: left;
+  box-shadow: 0 2px 12px rgba(26, 25, 23, .07);
+  overflow: hidden;
   transition: box-shadow .15s ease;
 }
 
-.capture-bar:hover {
-  box-shadow: 0 4px 18px rgba(26, 25, 23, .1);
+.capture-bar:focus-within {
+  box-shadow: 0 4px 20px rgba(26, 25, 23, .11);
+  border-color: var(--accent);
 }
 
-.capture-icon {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 auto;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--accent3);
-  color: var(--accent);
-}
-
-.capture-text {
+/* Search side — takes all available space */
+.capture-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex: 1;
   min-width: 0;
+  padding: 13px 6px 13px 18px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.capture-text strong {
-  display: block;
-  color: var(--ink);
-  font-size: 13.5px;
-  font-weight: 500;
-}
-
-.capture-text span {
-  display: block;
-  margin-top: 2px;
-  color: var(--ink3);
-  font-size: 11.5px;
-}
-
-.capture-mic {
+.capture-search-icon {
   flex: 0 0 auto;
-  display: grid;
-  place-items: center;
   color: var(--ink3);
+  display: flex;
+  align-items: center;
+}
+
+.capture-placeholder {
+  font-size: 14px;
+  color: var(--ink3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Divider between search and + */
+.capture-bar::before {
+  content: "";
+  display: none; /* not needed with button styling */
+}
+
+/* + button side */
+.capture-add-btn {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  margin: 5px 6px 5px 0;
+  border-radius: 50%;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44, 95, 74, .35);
+  transition: transform .12s ease, box-shadow .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.capture-add-btn:active {
+  transform: scale(.9);
+  box-shadow: 0 1px 4px rgba(44, 95, 74, .25);
 }
 
 .resurfaced-card {
@@ -2919,11 +2939,9 @@ kbd {
   }
 
   .capture-bar {
-    width: calc(100% - 32px);
     margin: 10px 16px 12px;
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: 0 2px 14px rgba(26, 25, 23, .07);
+    border-radius: 999px;
+    padding: 0;
   }
 
   .resurfaced-card {
