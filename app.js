@@ -17,6 +17,36 @@ const colorsByType = {
   Learning: "#3B6D11"
 };
 
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Good morning.";
+  if (h >= 12 && h < 17) return "Good afternoon.";
+  if (h >= 17 && h < 21) return "Good evening.";
+  return "Good night.";
+}
+
+function formatTimeAgo(value) {
+  const diff = Date.now() - new Date(value).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  return formatDate(value);
+}
+
+function formatResurfacedLabel(value) {
+  const diff = Date.now() - new Date(value).getTime();
+  const years = Math.floor(diff / (365 * 24 * 60 * 60 * 1000));
+  const months = Math.floor(diff / (30 * 24 * 60 * 60 * 1000));
+  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+  if (years >= 1) return years === 1 ? "A YEAR AGO" : `${years} YEARS AGO`;
+  if (months >= 1) return months === 1 ? "A MONTH AGO" : `${months} MONTHS AGO`;
+  return `${days} DAYS AGO`;
+}
+
 const seedEntries = [
   {
     id: "seed-1",
@@ -365,6 +395,7 @@ function renderStats() {
 }
 
 function renderEntryList(entries) {
+  const isHome = state.view === "all" && !state.activeTag;
   const label = state.activeTag
     ? `${entries.length} tagged entries`
     : state.view === "archive"
@@ -376,21 +407,23 @@ function renderEntryList(entries) {
   const boardKicker = state.activeTag ? "Tag" : state.view === "archive" ? "Stored away" : "Library";
 
   elements.content.innerHTML = `
-    <div class="memory-board">
-      <div class="board-head">
-        <div>
-          <span class="section-kicker">${boardKicker}</span>
-          <h2>${boardTitle}</h2>
+    <div class="memory-board${isHome ? " home-board" : ""}">
+      ${isHome ? renderHomeHeader() : `
+        <div class="board-head">
+          <div>
+            <span class="section-kicker">${boardKicker}</span>
+            <h2>${boardTitle}</h2>
+          </div>
+          <span class="muted">${entries.length} ${entries.length === 1 ? "memory" : "memories"}</span>
         </div>
-        <span class="muted">${entries.length} ${entries.length === 1 ? "memory" : "memories"}</span>
-      </div>
-      ${renderStats()}
+        ${renderStats()}
+      `}
       <div class="section-head">
         <h2>${label}</h2>
       </div>
       ${
         entries.length
-          ? `<div class="entries ${state.layout === "grid" ? "grid" : ""}">${entries.map(renderEntryButton).join("")}</div>`
+          ? `<div class="entries ${state.layout === "grid" && !isHome ? "grid" : ""}">${entries.map(renderEntryButton).join("")}</div>`
           : renderEmptyState()
       }
     </div>
@@ -398,30 +431,35 @@ function renderEntryList(entries) {
 }
 
 function renderEntryButton(entry) {
-  const tags = [entry.type, ...entry.tags].map((tag) => renderTag(tag)).join("");
   const isArchived = Boolean(entry.archivedAt);
+  const typeColor = colorsByType[entry.type] || "#888780";
+  const tagPills = entry.tags.map((tag) => renderTag(tag)).join("");
+  const projectPart = entry.project
+    ? `<span class="entry-meta-sep">·</span><span class="entry-row-project">${escapeHtml(entry.project)}</span>`
+    : "";
 
   return `
-    <article class="entry ${isArchived ? "archived" : ""}">
-      <span class="entry-dot" style="background:${colorsByType[entry.type] || "#888780"}"></span>
-      <span class="entry-body">
-        <button class="entry-open" type="button" data-entry-id="${entry.id}">
-          <span class="entry-top">
-            <span class="entry-title">${escapeHtml(entry.title)}${isArchived ? `<span class="archive-badge">Archived</span>` : ""}</span>
-            <span class="entry-date">${formatDate(entry.createdAt, "long")}</span>
-          </span>
-          <span class="entry-preview">${escapeHtml(entry.content)}</span>
-        </button>
-        <span class="entry-tags">${tags}</span>
-        <span class="entry-actions">
-          <button class="micro-button" type="button" data-edit-entry="${entry.id}">Edit</button>
-          <button class="micro-button" type="button" data-export-entry="${entry.id}">PDF</button>
-          <button class="micro-button" type="button" data-toggle-archive-entry="${entry.id}">${isArchived ? "Unarchive" : "Archive"}</button>
-          <select class="micro-select" data-move-entry="${entry.id}" aria-label="Move ${escapeHtml(entry.title)} to project">
-            ${renderProjectOptions(entry.project)}
-          </select>
-          <button class="micro-button danger" type="button" data-delete-entry="${entry.id}">Delete</button>
-        </span>
+    <article class="entry ${isArchived ? "archived" : ""}" style="--entry-color: ${typeColor}">
+      <button class="entry-open" type="button" data-entry-id="${entry.id}">
+        <div class="entry-row-head">
+          <span class="entry-title">${escapeHtml(entry.title)}${isArchived ? `<span class="archive-badge">Archived</span>` : ""}</span>
+          <span class="entry-date">${formatTimeAgo(entry.createdAt)}</span>
+        </div>
+        <p class="entry-preview">${escapeHtml(entry.content)}</p>
+        <div class="entry-row-meta">
+          <span class="entry-type-label">${escapeHtml(entry.type.toUpperCase())}</span>
+          ${projectPart}
+          ${tagPills}
+        </div>
+      </button>
+      <span class="entry-actions">
+        <button class="micro-button" type="button" data-edit-entry="${entry.id}">Edit</button>
+        <button class="micro-button" type="button" data-export-entry="${entry.id}">PDF</button>
+        <button class="micro-button" type="button" data-toggle-archive-entry="${entry.id}">${isArchived ? "Unarchive" : "Archive"}</button>
+        <select class="micro-select" data-move-entry="${entry.id}" aria-label="Move ${escapeHtml(entry.title)} to project">
+          ${renderProjectOptions(entry.project)}
+        </select>
+        <button class="micro-button danger" type="button" data-delete-entry="${entry.id}">Delete</button>
       </span>
     </article>
   `;
@@ -452,6 +490,68 @@ function renderEmptyState() {
       <h2>Nothing here yet</h2>
       <p>Capture a thought, note, meeting, or journal entry and memora will keep it ready for search and reflection.</p>
       <button class="primary-button compact" type="button" data-new-entry>New entry</button>
+    </div>
+  `;
+}
+
+function renderHomeHeader() {
+  const todayEntries = activeEntries().filter((e) =>
+    new Date(e.createdAt).toDateString() === new Date().toDateString()
+  );
+  const todayWords = todayEntries.reduce(
+    (sum, e) => sum + e.content.split(/\s+/).filter(Boolean).length, 0
+  );
+  const dateStr = new Date().toLocaleDateString([], {
+    weekday: "long", month: "long", day: "numeric"
+  }).toUpperCase();
+
+  return `
+    <div class="home-header">
+      <p class="home-date">${dateStr}</p>
+      <div class="home-greeting-row">
+        <span class="home-logo"><img src="./assets/memora-mark.png" alt="" aria-hidden="true" /></span>
+        <h2 class="home-greeting">${getGreeting()}</h2>
+      </div>
+      <p class="home-stats">${todayEntries.length} ${todayEntries.length === 1 ? "entry" : "entries"} today · ${todayWords} words</p>
+    </div>
+    <button class="capture-bar" type="button" data-new-entry>
+      <span class="capture-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="8" y1="2" x2="8" y2="14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </span>
+      <span class="capture-text">
+        <strong>What's worth remembering today?</strong>
+        <span>Tap to capture · ⌘N</span>
+      </span>
+      <span class="capture-mic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </span>
+    </button>
+    ${renderResurfacedCard()}
+  `;
+}
+
+function renderResurfacedCard() {
+  const older = sortedEntries(activeEntries()).filter((e) =>
+    Date.now() - new Date(e.createdAt).getTime() > 6 * 24 * 60 * 60 * 1000
+  );
+  if (!older.length) return "";
+  const entry = older[Math.floor(Math.random() * older.length)];
+  const preview = entry.content.slice(0, 140);
+
+  return `
+    <div class="resurfaced-card">
+      <p class="resurfaced-label">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 0L7.5 4.5H12L8.25 7.25L9.75 11.75L6 9L2.25 11.75L3.75 7.25L0 4.5H4.5L6 0Z"/></svg>
+        RESURFACED · ${formatResurfacedLabel(entry.createdAt)}
+      </p>
+      <h3 class="resurfaced-title">${escapeHtml(entry.title)}</h3>
+      <p class="resurfaced-preview">"${escapeHtml(preview)}${entry.content.length > 140 ? "…" : ""}"</p>
+      <div class="resurfaced-footer">
+        <span class="resurfaced-dots">
+          <span class="rdot active"></span><span class="rdot"></span><span class="rdot"></span>
+        </span>
+        <button class="resurfaced-btn" type="button" data-entry-id="${entry.id}">Open →</button>
+      </div>
     </div>
   `;
 }
@@ -567,9 +667,10 @@ function renderProjectCard(project, entries, ordered, newest, tags) {
 }
 
 function renderProjectEntry(entry) {
+  const typeColor = colorsByType[entry.type] || "#888780";
   return `
-    <button class="project-entry" type="button" data-entry-id="${entry.id}">
-      <span class="entry-dot" style="background:${colorsByType[entry.type] || "#888780"}"></span>
+    <button class="project-entry" type="button" data-entry-id="${entry.id}" style="--entry-color: ${typeColor}">
+      <span class="project-entry-dot"></span>
       <span>
         <strong>${escapeHtml(entry.title)}</strong>
         <small>${formatDate(entry.createdAt, "long")}</small>
