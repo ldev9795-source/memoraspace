@@ -1294,6 +1294,7 @@ function updateCloudStatus(forcedState = "", message = "") {
   elements.syncDot.className = `sync-dot ${mode}`;
   const moreDot = document.getElementById("sync-dot-more");
   if (moreDot) moreDot.className = `sync-dot ${mode}`;
+  updateTopbarAvatar();
 
   if (!elements.cloudStatus) return;
 
@@ -1318,6 +1319,69 @@ function openMoreSheet() {
 function closeMoreSheet() {
   const sheet = document.getElementById("more-sheet");
   if (sheet) sheet.classList.remove("open");
+}
+
+function openProfileSheet() {
+  const sheet = document.getElementById("profile-sheet");
+  if (!sheet) return;
+
+  const user = state.cloudUser;
+  const localName = localStorage.getItem("memora.localName") || "";
+  const email = user?.email || user?.phone || "";
+  const name = user?.user_metadata?.full_name || localName;
+  const initial = (name || email || "?")[0].toUpperCase();
+  const isSignedIn = Boolean(user);
+
+  // Avatar
+  const avatarSmall = document.getElementById("topbar-avatar");
+  const avatarLarge = document.getElementById("profile-avatar-large");
+  const avatarHint = document.getElementById("profile-avatar-hint");
+  if (avatarLarge) {
+    avatarLarge.innerHTML = isSignedIn ? initial : `<svg width="36" height="36" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+    avatarLarge.classList.toggle("signed-in", isSignedIn);
+  }
+  if (avatarHint) avatarHint.textContent = isSignedIn ? (email || "Signed in") : "Local account";
+
+  // Fields
+  const nameInput = document.getElementById("profile-name-input");
+  const emailInput = document.getElementById("profile-email-input");
+  if (nameInput) nameInput.value = name;
+  if (emailInput) {
+    emailInput.value = email;
+    emailInput.readOnly = isSignedIn; // can't change OAuth email here
+    emailInput.style.opacity = isSignedIn ? ".5" : "1";
+  }
+
+  // Actions
+  const signoutBtn = document.getElementById("profile-signout-btn");
+  const cloudBtn = document.getElementById("profile-cloud-btn");
+  const cloudLabel = document.getElementById("profile-cloud-label");
+  if (signoutBtn) signoutBtn.style.display = isSignedIn ? "flex" : "none";
+  if (cloudLabel) cloudLabel.textContent = isSignedIn ? "Cloud settings" : "Connect to cloud";
+
+  sheet.classList.add("open");
+}
+
+function closeProfileSheet() {
+  const sheet = document.getElementById("profile-sheet");
+  if (sheet) sheet.classList.remove("open");
+}
+
+function updateTopbarAvatar() {
+  const avatar = document.getElementById("topbar-avatar");
+  if (!avatar) return;
+  const user = state.cloudUser;
+  const localName = localStorage.getItem("memora.localName") || "";
+  const name = user?.user_metadata?.full_name || localName;
+  const isSignedIn = Boolean(user);
+  if (isSignedIn || localName) {
+    const initial = (name || user?.email || "?")[0].toUpperCase();
+    avatar.textContent = initial;
+    avatar.classList.toggle("signed-in", isSignedIn);
+  } else {
+    avatar.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+    avatar.classList.remove("signed-in");
+  }
 }
 
 function openCloudModal() {
@@ -1814,6 +1878,19 @@ document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-manage-projects]")) openProjectManager();
   if (event.target.closest("[data-open-more]")) openMoreSheet();
   if (event.target.closest("[data-close-more]")) closeMoreSheet();
+  if (event.target.closest("[data-open-profile]")) { openProfileSheet(); return; }
+  if (event.target.closest("[data-close-profile]")) { closeProfileSheet(); return; }
+
+  // Profile save
+  if (event.target.closest("#profile-save-btn")) {
+    const name = (document.getElementById("profile-name-input")?.value || "").trim();
+    localStorage.setItem("memora.localName", name);
+    updateTopbarAvatar();
+    closeProfileSheet();
+    toast(name ? `Profile updated — Hi, ${name}!` : "Profile saved");
+    render(); // refresh greeting
+    return;
+  }
 
   // Sync option toggles
   if (event.target.closest("#sync-email-toggle")) { toggleSyncGroup("sync-email-group"); return; }
@@ -2007,6 +2084,7 @@ document.querySelector("#view-nav").addEventListener("click", (event) => {
 });
 
 render();
+updateTopbarAvatar();
 initCloud();
 maybeOpenOnboarding();
 
