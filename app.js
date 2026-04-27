@@ -1306,6 +1306,16 @@ function updateCloudStatus(forcedState = "", message = "") {
   renderOnboardingStatus();
 }
 
+function openMoreSheet() {
+  const sheet = document.getElementById("more-sheet");
+  if (sheet) sheet.classList.add("open");
+}
+
+function closeMoreSheet() {
+  const sheet = document.getElementById("more-sheet");
+  if (sheet) sheet.classList.remove("open");
+}
+
 function openCloudModal() {
   const { url, anonKey } = getCloudConfig();
   document.querySelector("#supabase-url").value = url;
@@ -1748,6 +1758,7 @@ document.addEventListener("click", async (event) => {
     state.view = viewButton.dataset.view;
     state.activeTag = "";
     document.body.classList.remove("sidebar-open");
+    closeMoreSheet();
     render();
     return;
   }
@@ -1772,7 +1783,8 @@ document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-open-cloud]")) openCloudModal();
   if (event.target.closest("[data-manage-tags]")) openTagManager();
   if (event.target.closest("[data-manage-projects]")) openProjectManager();
-  if (event.target.closest("[data-toggle-sidebar]")) document.body.classList.toggle("sidebar-open");
+  if (event.target.closest("[data-open-more]")) openMoreSheet();
+  if (event.target.closest("[data-close-more]")) closeMoreSheet();
   if (event.target.closest("[data-close-modal]")) closeModal(elements.entryModal);
   if (event.target.closest("[data-close-reader]")) closeModal(elements.readerModal);
   if (event.target.closest("[data-close-manager]")) closeModal(elements.managerModal);
