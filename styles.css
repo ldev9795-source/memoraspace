@@ -1448,6 +1448,205 @@ kbd {
   padding-top: 16px;
 }
 
+/* ── Sync / account redesign ───────────────────────────── */
+.sync-card {
+  max-width: 440px !important;
+  border-radius: 24px !important;
+}
+
+.sync-body {
+  padding: 0 20px 28px;
+  overflow-y: auto;
+}
+
+/* Signed-in state */
+.sync-signed-in {
+  text-align: center;
+  padding: 12px 0 20px;
+}
+
+.sync-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent2);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.sync-signed-in-email {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.sync-signed-in-sub {
+  font-size: 14px;
+  color: var(--ink2);
+  margin: 0 0 20px;
+}
+
+.sync-signed-in-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Options list */
+.sync-tagline {
+  font-family: "Lora", Georgia, serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.sync-sub {
+  font-size: 15px;
+  color: var(--ink2);
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+
+.sync-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sync-option-group {
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color .15s ease;
+}
+
+.sync-option-group.expanded {
+  border-color: var(--accent);
+}
+
+.sync-option-local-group {
+  border-style: dashed;
+}
+
+.sync-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .1s ease;
+}
+
+.sync-option:active {
+  background: var(--bg2);
+}
+
+.sync-option-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  color: var(--ink2);
+}
+
+.sync-icon-google {
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.sync-icon-local {
+  background: var(--accent2);
+  color: var(--accent);
+}
+
+.sync-option-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-option-text strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+
+.sync-option-text span {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.4;
+}
+
+.sync-chevron {
+  color: var(--ink3);
+  flex: 0 0 auto;
+  transition: transform .2s ease;
+}
+
+.sync-option-group.expanded .sync-chevron {
+  transform: rotate(90deg);
+}
+
+/* Expanded inline form */
+.sync-expand {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.sync-option-group.expanded .sync-expand {
+  display: flex;
+}
+
+.sync-expand-hint {
+  font-size: 13px;
+  color: var(--ink2);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sync-expand input {
+  width: 100%;
+  height: 44px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  padding: 0 14px;
+  outline: none;
+  transition: border-color .15s ease;
+}
+
+.sync-expand input:focus {
+  border-color: var(--accent);
+}
+
+.sync-expand .primary-button {
+  width: 100%;
+  height: 44px;
+  font-size: 15px;
+}
+
 .onboarding-screen {
   position: fixed;
   inset: 0;

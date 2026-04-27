@@ -19,10 +19,12 @@ const colorsByType = {
 
 function getGreeting() {
   const h = new Date().getHours();
-  if (h >= 5 && h < 12) return "Good morning.";
-  if (h >= 12 && h < 17) return "Good afternoon.";
-  if (h >= 17 && h < 21) return "Good evening.";
-  return "Good night.";
+  const name = localStorage.getItem("memora.localName") || state.cloudUser?.user_metadata?.full_name?.split(" ")[0] || "";
+  const suffix = name ? `, ${name}.` : ".";
+  if (h >= 5 && h < 12) return `Good morning${suffix}`;
+  if (h >= 12 && h < 17) return `Good afternoon${suffix}`;
+  if (h >= 17 && h < 21) return `Good evening${suffix}`;
+  return `Good night${suffix}`;
 }
 
 function formatTimeAgo(value) {
@@ -1323,7 +1325,32 @@ function openCloudModal() {
   document.querySelector("#supabase-url").value = url;
   document.querySelector("#supabase-anon-key").value = anonKey;
   updateCloudStatus();
+  // Show signed-in or sign-in options panel
+  const signedIn = Boolean(state.cloudUser);
+  const signedInEl = document.getElementById("sync-signed-in");
+  const optionsEl = document.getElementById("sync-options");
+  if (signedInEl && optionsEl) {
+    signedInEl.style.display = signedIn ? "block" : "none";
+    optionsEl.style.display = signedIn ? "none" : "flex";
+    if (signedIn) {
+      const email = state.cloudUser?.email || state.cloudUser?.phone || "Signed in";
+      const emailEl = document.getElementById("sync-signed-in-email");
+      if (emailEl) emailEl.textContent = email;
+    }
+  }
+  // Pre-fill local name
+  const nameInput = document.getElementById("local-display-name");
+  if (nameInput) nameInput.value = localStorage.getItem("memora.localName") || "";
   openModal(elements.cloudModal);
+}
+
+function toggleSyncGroup(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  const isOpen = group.classList.contains("expanded");
+  // Close all
+  document.querySelectorAll(".sync-option-group.expanded").forEach(g => g.classList.remove("expanded"));
+  if (!isOpen) group.classList.add("expanded");
 }
 
 async function signInWithOAuth(provider) {
@@ -1787,6 +1814,20 @@ document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-manage-projects]")) openProjectManager();
   if (event.target.closest("[data-open-more]")) openMoreSheet();
   if (event.target.closest("[data-close-more]")) closeMoreSheet();
+
+  // Sync option toggles
+  if (event.target.closest("#sync-email-toggle")) { toggleSyncGroup("sync-email-group"); return; }
+  if (event.target.closest("#sync-phone-toggle")) { toggleSyncGroup("sync-phone-group"); return; }
+  if (event.target.closest("#sync-local-toggle")) { toggleSyncGroup("sync-local-group"); return; }
+
+  // Save local profile
+  if (event.target.closest("#save-local-profile")) {
+    const name = (document.getElementById("local-display-name")?.value || "").trim();
+    localStorage.setItem("memora.localName", name);
+    closeModal(elements.cloudModal);
+    toast(name ? `Welcome, ${name}!` : "Saved locally");
+    return;
+  }
   if (event.target.closest("[data-close-modal]")) closeModal(elements.entryModal);
   if (event.target.closest("[data-close-reader]")) closeModal(elements.readerModal);
   if (event.target.closest("[data-close-manager]")) closeModal(elements.managerModal);

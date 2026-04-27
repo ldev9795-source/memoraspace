@@ -275,48 +275,121 @@
     </div>
 
     <div class="modal" id="cloud-modal" aria-hidden="true">
-      <div class="modal-card manager-card" role="dialog" aria-modal="true" aria-labelledby="cloud-title">
+      <div class="modal-card sync-card" role="dialog" aria-modal="true" aria-labelledby="cloud-title">
         <header class="modal-head">
-          <h2 id="cloud-title">Cloud sync</h2>
+          <h2 id="cloud-title">Your account</h2>
           <button class="icon-button" type="button" data-close-cloud aria-label="Close">
             <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M4.5 4.5l9 9M13.5 4.5l-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
             </svg>
           </button>
         </header>
-        <div class="modal-body">
-          <div class="cloud-status" id="cloud-status"></div>
-          <form class="cloud-config" id="cloud-config-form">
-            <label class="field">
-              <span>Supabase project URL</span>
-              <input id="supabase-url" autocomplete="off" placeholder="https://your-project.supabase.co" />
-            </label>
-            <label class="field">
-              <span>Supabase anon key</span>
-              <input id="supabase-anon-key" autocomplete="off" placeholder="eyJ..." />
-            </label>
-            <button class="primary-button compact" type="submit">Save cloud settings</button>
-          </form>
-          <div class="cloud-auth">
-            <button class="ghost-button" type="button" data-oauth-provider="google">Continue with Google</button>
-            <button class="ghost-button" type="button" data-oauth-provider="apple">Continue with Apple</button>
+
+        <div class="modal-body sync-body">
+
+          <!-- Signed-in state -->
+          <div class="sync-signed-in" id="sync-signed-in" style="display:none">
+            <div class="sync-avatar" id="sync-avatar">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <p class="sync-signed-in-email" id="sync-signed-in-email"></p>
+            <p class="sync-signed-in-sub">Your library syncs automatically.</p>
+            <div class="sync-signed-in-actions">
+              <button class="primary-button compact" type="button" data-sync-now>Sync now</button>
+              <button class="ghost-button compact" type="button" data-sign-out>Sign out</button>
+            </div>
           </div>
-          <form class="cloud-auth-form" data-email-auth-form>
-            <input id="auth-email" type="email" placeholder="Email address" autocomplete="email" />
-            <button class="ghost-button" type="submit">Send email link</button>
+
+          <!-- Sign-in options -->
+          <div class="sync-options" id="sync-options">
+            <p class="sync-tagline">Your memories,<br>everywhere.</p>
+            <p class="sync-sub">Choose how to save and back up your library.</p>
+
+            <!-- Google -->
+            <div class="sync-option-group" id="sync-google-group">
+              <button class="sync-option" type="button" data-oauth-provider="google">
+                <span class="sync-option-icon sync-icon-google">
+                  <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                </span>
+                <div class="sync-option-text">
+                  <strong>Continue with Google</strong>
+                  <span>Sync across all your devices instantly</span>
+                </div>
+                <svg class="sync-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+
+            <!-- Email -->
+            <div class="sync-option-group" id="sync-email-group">
+              <button class="sync-option" type="button" id="sync-email-toggle">
+                <span class="sync-option-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <div class="sync-option-text">
+                  <strong>Continue with Email</strong>
+                  <span>Magic link sent to your inbox</span>
+                </div>
+                <svg class="sync-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <form class="sync-expand" data-email-auth-form>
+                <input id="auth-email" type="email" placeholder="your@email.com" autocomplete="email" />
+                <button class="primary-button" type="submit">Send magic link</button>
+              </form>
+            </div>
+
+            <!-- Phone -->
+            <div class="sync-option-group" id="sync-phone-group">
+              <button class="sync-option" type="button" id="sync-phone-toggle">
+                <span class="sync-option-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="1" width="14" height="22" rx="3" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+                </span>
+                <div class="sync-option-text">
+                  <strong>Continue with Phone</strong>
+                  <span>One-time code sent via SMS</span>
+                </div>
+                <svg class="sync-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <form class="sync-expand" data-phone-auth-form>
+                <input id="auth-phone" type="tel" placeholder="+1 234 567 8900" autocomplete="tel" />
+                <button class="primary-button" type="submit">Send code</button>
+              </form>
+              <form class="sync-expand" data-verify-phone-form style="display:none">
+                <p class="sync-expand-hint">Enter the code we sent to your phone.</p>
+                <input id="auth-phone-otp" inputmode="numeric" placeholder="6-digit code" />
+                <button class="primary-button" type="submit">Verify &amp; sign in</button>
+              </form>
+            </div>
+
+            <!-- Local -->
+            <div class="sync-option-group sync-option-local-group" id="sync-local-group">
+              <button class="sync-option" type="button" id="sync-local-toggle">
+                <span class="sync-option-icon sync-icon-local">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 20h8M12 18v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <div class="sync-option-text">
+                  <strong>Stay local</strong>
+                  <span>Saved on this device, no account needed</span>
+                </div>
+                <svg class="sync-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="sync-expand" id="sync-local-expand">
+                <p class="sync-expand-hint">Give yourself a name for the greeting — optional but nice.</p>
+                <input type="text" id="local-display-name" placeholder="Your first name" maxlength="40" autocomplete="given-name" />
+                <button class="primary-button" type="button" id="save-local-profile">Save &amp; continue</button>
+              </div>
+            </div>
+
+          </div><!-- /sync-options -->
+
+          <!-- Hidden Supabase config (kept for underlying auth) -->
+          <form id="cloud-config-form" style="display:none" aria-hidden="true">
+            <input id="supabase-url" autocomplete="off" />
+            <input id="supabase-anon-key" autocomplete="off" />
           </form>
-          <form class="cloud-auth-form" data-phone-auth-form>
-            <input id="auth-phone" type="tel" placeholder="Phone number with country code" autocomplete="tel" />
-            <button class="ghost-button" type="submit">Send phone OTP</button>
-          </form>
-          <form class="cloud-auth-form" data-verify-phone-form>
-            <input id="auth-phone-otp" inputmode="numeric" placeholder="Phone OTP code" />
-            <button class="ghost-button" type="submit">Verify phone OTP</button>
-          </form>
-          <div class="cloud-actions">
-            <button class="ghost-button compact" type="button" data-sync-now>Sync now</button>
-            <button class="danger-button compact reader-delete" type="button" data-sign-out>Sign out</button>
-          </div>
+
+          <!-- Status element (kept for JS, visually hidden) -->
+          <div id="cloud-status" style="display:none" aria-live="polite"></div>
+
         </div>
       </div>
     </div>
