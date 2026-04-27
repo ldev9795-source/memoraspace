@@ -1290,6 +1290,8 @@ function updateCloudStatus(forcedState = "", message = "") {
 
   elements.syncLabel.textContent = labels[mode] || "Local";
   elements.syncDot.className = `sync-dot ${mode}`;
+  const moreDot = document.getElementById("sync-dot-more");
+  if (moreDot) moreDot.className = `sync-dot ${mode}`;
 
   if (!elements.cloudStatus) return;
 

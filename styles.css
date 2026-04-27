@@ -2092,6 +2092,11 @@ kbd {
     z-index: 10;
   }
 
+  /* Clean native topbar: title only, all actions live in the More sheet */
+  .topbar-actions {
+    display: none !important;
+  }
+
   .hide-desktop {
     display: inline-grid;
   }
@@ -2129,13 +2134,8 @@ kbd {
 
 @media (max-width: 560px) {
   .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .topbar-actions {
-    width: 100%;
-    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
   }
 
   .segmented {
