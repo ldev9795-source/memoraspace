@@ -18,9 +18,20 @@
       href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
   </head>
   <body>
+    <!-- ── Splash screen (first-time users only) ── -->
+    <div id="splash-screen" class="splash-screen" aria-hidden="true">
+      <div class="splash-inner">
+        <div class="splash-logo-wrap">
+          <img class="splash-logo" src="./assets/memora-mark.png" alt="" />
+        </div>
+        <p class="splash-wordmark">mem<span>·</span>ora</p>
+        <p class="splash-tagline">Private memory library</p>
+      </div>
+    </div>
+
     <div class="shell">
       <aside class="sidebar" aria-label="Main navigation">
         <div class="sidebar-top">
@@ -408,72 +419,135 @@
       </div>
     </div>
 
-    <section class="onboarding-screen" id="onboarding-modal" aria-hidden="true" aria-labelledby="onboarding-title">
-      <div class="onboarding-shell">
-        <div class="onboarding-hero">
-          <div class="onboarding-brand">
-            <span class="onboarding-brand-mark"><img src="./assets/memora-mark.png" alt="" aria-hidden="true" /></span>
-            <span class="onboarding-brand-word">mem<span>·</span>ora</span>
-          </div>
-          <p class="section-kicker">Private memory library</p>
-          <h2 id="onboarding-title">A calmer place to capture, organise, and return to your thoughts.</h2>
-          <p id="onboarding-copy">
-            Build a second brain that feels quiet enough for daily notes and structured enough for long-term memory.
-          </p>
-          <div class="onboarding-features">
-            <article>
-              <span>01</span>
+    <!-- ── Onboarding — 3-step mobile-first redesign ── -->
+    <section class="onboarding-screen" id="onboarding-modal" aria-hidden="true">
+
+      <!-- Step progress dots -->
+      <div class="ob-progress" aria-hidden="true">
+        <span class="ob-dot active"></span>
+        <span class="ob-dot"></span>
+        <span class="ob-dot"></span>
+      </div>
+
+      <!-- STEP 1 — Welcome -->
+      <div class="ob-slide" id="ob-s1">
+        <div class="ob-logo-wrap">
+          <img class="ob-logo-img" src="./assets/memora-mark.png" alt="" aria-hidden="true" />
+        </div>
+        <p class="ob-kicker">Welcome</p>
+        <h1 class="ob-headline">A calmer place<br>for your thoughts.</h1>
+        <p class="ob-body">Capture, organise and revisit your memories — quietly, without distraction or noise.</p>
+        <button class="ob-cta" type="button" data-ob-next>
+          Get started
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- STEP 2 — Features -->
+      <div class="ob-slide ob-slide--hidden" id="ob-s2">
+        <p class="ob-kicker">What you get</p>
+        <h2 class="ob-headline ob-headline--sm">Everything you need,<br>nothing you don't.</h2>
+        <div class="ob-features">
+          <div class="ob-feat">
+            <span class="ob-feat-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </span>
+            <div class="ob-feat-text">
               <h3>Capture without friction</h3>
-              <p>Save thoughts, meetings, journal notes, and learning fragments with tags and project context.</p>
-            </article>
-            <article>
-              <span>02</span>
+              <p>Save thoughts, notes, meetings and ideas in seconds — with tags and project context.</p>
+            </div>
+          </div>
+          <div class="ob-feat">
+            <span class="ob-feat-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="10" y2="18"/></svg>
+            </span>
+            <div class="ob-feat-text">
               <h3>Organise as you go</h3>
-              <p>Edit entries, rename tags, move notes across projects, and keep your library flexible.</p>
-            </article>
-            <article>
-              <span>03</span>
+              <p>Filter by tag, sort by date, browse projects. Your library stays flexible and searchable.</p>
+            </div>
+          </div>
+          <div class="ob-feat">
+            <span class="ob-feat-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.27 13A9 9 0 1 1 19.01 6.34L21.5 8"/></svg>
+            </span>
+            <div class="ob-feat-text">
               <h3>Reflect and resurface</h3>
-              <p>Search instantly, browse a timeline, and revisit older memories when they become useful again.</p>
-            </article>
+              <p>Browse a heatmap, revisit random memories, and let the past inform the present.</p>
+            </div>
           </div>
         </div>
-        <aside class="onboarding-auth">
-          <div class="mini-app" aria-hidden="true">
-            <div class="mini-sidebar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="mini-main">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-          <div class="onboarding-auth-card">
-            <img class="auth-logo" src="./assets/memora-mark.png" alt="" aria-hidden="true" />
-            <p class="section-kicker">Start syncing</p>
-            <h3>Create your profile</h3>
-            <p>Sign up or sign in to sync your memory library with memora cloud. Your profile is created automatically after login.</p>
-            <div class="cloud-status" id="onboarding-cloud-status"></div>
-            <div class="onboarding-auth-actions">
-              <button class="primary-button compact" type="button" data-oauth-provider="google">Sign up with Google</button>
-              <button class="ghost-button" type="button" data-oauth-provider="apple">Sign up with Apple</button>
-            </div>
-            <form class="cloud-auth-form onboarding-email" data-email-auth-form>
-              <input id="onboarding-auth-email" type="email" placeholder="Email address" autocomplete="email" />
-              <button class="ghost-button" type="submit">Email sign in</button>
-            </form>
-            <form class="cloud-auth-form onboarding-phone" data-phone-auth-form>
-              <input id="onboarding-auth-phone" type="tel" placeholder="Phone number" autocomplete="tel" />
-              <button class="ghost-button" type="submit">Phone sign in</button>
-            </form>
-            <button class="ghost-button full" type="button" data-open-cloud>Review cloud settings</button>
-            <button class="ghost-button full" type="button" data-skip-onboarding>Continue locally</button>
-          </div>
-        </aside>
+        <button class="ob-cta" type="button" data-ob-next>
+          Continue
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
+
+      <!-- STEP 3 — Account setup -->
+      <div class="ob-slide ob-slide--hidden" id="ob-s3">
+        <p class="ob-kicker">Your account</p>
+        <h2 class="ob-headline ob-headline--sm">Your memories,<br>your choice.</h2>
+        <p class="ob-body ob-body--sm">Sync keeps your library safe across every device. Or start locally — no account needed.</p>
+
+        <div class="ob-auth-stack">
+
+          <!-- Google -->
+          <button class="ob-auth-row ob-auth-google" type="button" data-oauth-provider="google">
+            <span class="ob-auth-icon">
+              <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            </span>
+            <div class="ob-auth-text">
+              <strong>Continue with Google</strong>
+              <span>Sync across all your devices instantly</span>
+            </div>
+            <svg class="ob-auth-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <!-- Email -->
+          <div class="ob-auth-expandable">
+            <button class="ob-auth-row" type="button" id="ob-email-btn">
+              <span class="ob-auth-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </span>
+              <div class="ob-auth-text">
+                <strong>Continue with Email</strong>
+                <span>Magic link sent to your inbox</span>
+              </div>
+              <svg class="ob-auth-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <form class="ob-expand-body" id="ob-email-expand" data-email-auth-form>
+              <input id="ob-auth-email-input" type="email" placeholder="your@email.com" autocomplete="email" />
+              <button class="ob-expand-submit" type="submit">Send magic link</button>
+            </form>
+          </div>
+
+          <!-- Stay local -->
+          <div class="ob-auth-expandable">
+            <button class="ob-auth-row ob-auth-local" type="button" id="ob-local-btn">
+              <span class="ob-auth-icon ob-icon-local">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 20h8M12 18v2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </span>
+              <div class="ob-auth-text">
+                <strong>Stay local</strong>
+                <span>Saved on this device only, no account needed</span>
+              </div>
+              <svg class="ob-auth-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="ob-expand-body" id="ob-local-expand">
+              <input id="ob-local-name-input" type="text" placeholder="Your first name (optional)" maxlength="40" autocomplete="given-name" />
+              <button class="ob-expand-submit ob-expand-submit--primary" type="button" data-ob-local-save>Start mem·ora</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Hidden status for JS cloud status updates -->
+        <div id="onboarding-cloud-status" style="display:none" aria-live="polite"></div>
+      </div>
+
     </section>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -628,7 +702,7 @@
       </div>
     </div>
 
-    <script src="./app.js?v=3" type="module"></script>
+    <script src="./app.js?v=4" type="module"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

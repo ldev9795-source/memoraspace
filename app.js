@@ -156,13 +156,14 @@ const elements = {
 
 function loadEntries() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return seedEntries;
+  // First-time users get a clean library, not the seed entries
+  if (!saved) return [];
 
   try {
     const entries = JSON.parse(saved);
-    return Array.isArray(entries) ? entries : seedEntries;
+    return Array.isArray(entries) ? entries : [];
   } catch {
-    return seedEntries;
+    return [];
   }
 }
 
@@ -1153,7 +1154,83 @@ function completeOnboarding() {
 
 function maybeOpenOnboarding() {
   if (localStorage.getItem(ONBOARDING_KEY) === "true") return;
-  window.setTimeout(() => openOnboarding(), 150);
+  openOnboarding();
+}
+
+// ── Splash screen ────────────────────────────────────────────
+function initSplash() {
+  const splash = document.getElementById("splash-screen");
+  if (!splash) return;
+
+  // Returning users: remove immediately, no splash
+  if (localStorage.getItem(ONBOARDING_KEY) === "true") {
+    splash.remove();
+    return;
+  }
+
+  // splashFadeOut: 1.55s delay + 0.55s duration = ~2.1s total
+  // Use both setTimeout AND visibilitychange so it fires even if tab was hidden
+  function showOnboarding() {
+    if (!document.getElementById("splash-screen")) return; // already removed
+    splash.remove();
+    maybeOpenOnboarding();
+  }
+  const splashTimer = setTimeout(showOnboarding, 2200);
+  // If tab becomes visible after being hidden, fire immediately
+  document.addEventListener("visibilitychange", function onVisible() {
+    if (!document.hidden) {
+      clearTimeout(splashTimer);
+      document.removeEventListener("visibilitychange", onVisible);
+      showOnboarding();
+    }
+  });
+}
+
+// ── Onboarding step navigation ───────────────────────────────
+let _obStep = 1;
+
+function obGoToStep(step) {
+  const dots = document.querySelectorAll(".ob-dot");
+  const prev = document.getElementById(`ob-s${_obStep}`);
+  const next = document.getElementById(`ob-s${step}`);
+  if (!prev || !next || _obStep === step) return;
+
+  // Exit: slide out current step
+  prev.classList.add("ob-slide--exit");
+
+  // After exit animation (~220ms), swap slides
+  setTimeout(() => {
+    prev.classList.add("ob-slide--hidden");
+    prev.classList.remove("ob-slide--exit");
+    next.classList.remove("ob-slide--hidden");
+    next.classList.add("ob-slide--enter");
+    // Clean up enter class after it plays
+    setTimeout(() => next.classList.remove("ob-slide--enter"), 420);
+    _obStep = step;
+    dots.forEach((d, i) => d.classList.toggle("active", i < step));
+  }, 220);
+}
+
+function initObExpandToggles() {
+  // Email expand
+  document.getElementById("ob-email-btn")?.addEventListener("click", () => {
+    const form = document.getElementById("ob-email-expand");
+    if (!form) return;
+    const open = !form.classList.contains("ob-expanded");
+    document.querySelectorAll(".ob-auth-expandable .ob-expand-body").forEach(f => f.classList.remove("ob-expanded"));
+    if (open) form.classList.add("ob-expanded");
+    document.getElementById("ob-auth-email-input")?.focus();
+  });
+
+  // Local expand
+  document.getElementById("ob-local-btn")?.addEventListener("click", () => {
+    const form = document.getElementById("ob-local-expand");
+    if (!form) return;
+    const open = !form.classList.contains("ob-expanded");
+    document.querySelectorAll(".ob-auth-expandable .ob-expand-body").forEach(f => f.classList.remove("ob-expanded"));
+    if (open) form.classList.add("ob-expanded");
+    document.getElementById("ob-local-name-input")?.focus();
+  });
 }
 
 function renderSearch(query) {
@@ -2060,6 +2137,25 @@ document.addEventListener("click", async (event) => {
     completeOnboarding();
   }
 
+  if (event.target.closest("[data-ob-next]")) {
+    // Only act if the button's slide is currently visible (not hidden)
+    const slide = event.target.closest(".ob-slide");
+    if (!slide || slide.classList.contains("ob-slide--hidden")) return;
+    obGoToStep(_obStep + 1);
+    return;
+  }
+
+  if (event.target.closest("[data-ob-local-save]")) {
+    const name = document.getElementById("ob-local-name-input")?.value.trim();
+    if (name) {
+      localStorage.setItem("memora.localName", name);
+      updateTopbarAvatar();
+    }
+    completeOnboarding();
+    render();
+    return;
+  }
+
   const editEntryButton = event.target.closest("[data-edit-entry]");
   if (editEntryButton) {
     const entry = state.entries.find((item) => item.id === editEntryButton.dataset.editEntry);
@@ -2226,7 +2322,14 @@ document.querySelector("#view-nav").addEventListener("click", (event) => {
 render();
 updateTopbarAvatar();
 initCloud();
-maybeOpenOnboarding();
+initSplash();           // shows splash → then maybeOpenOnboarding()
+initObExpandToggles();
+// For returning users (no splash), open onboarding immediately if needed
+if (localStorage.getItem(ONBOARDING_KEY) === "true") {
+  // Already completed — nothing to do
+} else if (!document.getElementById("splash-screen")) {
+  maybeOpenOnboarding();
+}
 
 // ============================================================
 // PWA + Native Mobile Enhancements
