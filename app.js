@@ -1910,10 +1910,17 @@ document.addEventListener("click", async (event) => {
     toast(name ? `Welcome, ${name}!` : "Saved locally");
     return;
   }
-  if (event.target.closest("[data-close-modal]")) closeModal(elements.entryModal);
-  if (event.target.closest("[data-close-reader]")) closeModal(elements.readerModal);
-  if (event.target.closest("[data-close-manager]")) closeModal(elements.managerModal);
-  if (event.target.closest("[data-close-cloud]")) closeModal(elements.cloudModal);
+  if (event.target.closest("[data-close-modal]")) { closeModal(elements.entryModal); return; }
+  if (event.target.closest("[data-close-reader]")) { closeModal(elements.readerModal); return; }
+  if (event.target.closest("[data-close-manager]")) { closeModal(elements.managerModal); return; }
+  if (event.target.closest("[data-close-cloud]")) { closeModal(elements.cloudModal); return; }
+
+  // Close any modal when tapping its backdrop (the .modal overlay itself)
+  const clickedModal = event.target.closest(".modal");
+  if (clickedModal && clickedModal.classList.contains("open") && !event.target.closest(".modal-card")) {
+    closeModal(clickedModal);
+    return;
+  }
 
   const oauthButton = event.target.closest("[data-oauth-provider]");
   if (oauthButton) signInWithOAuth(oauthButton.dataset.oauthProvider);
