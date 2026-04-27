@@ -362,6 +362,9 @@ function updateChrome() {
   document.querySelectorAll("[data-layout]").forEach((button) => {
     button.classList.toggle("active", button.dataset.layout === state.layout);
   });
+
+  // Slide the bottom-nav indicator to the newly active tab
+  moveNavIndicator();
 }
 
 function renderTags() {
@@ -1163,11 +1166,49 @@ function renderSearch(query) {
 function openModal(modal) {
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
+  if (modal === elements.entryModal) {
+    document.querySelector(".bottom-nav-new")?.classList.add("fab-open");
+  }
 }
 
 function closeModal(modal) {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
+  if (modal === elements.entryModal) {
+    document.querySelector(".bottom-nav-new")?.classList.remove("fab-open");
+  }
+}
+
+/**
+ * Slides the .nav-indicator pill to sit beneath the active bottom-nav button.
+ * Uses spring cubic-bezier defined in CSS — call after toggling .active classes.
+ */
+function moveNavIndicator() {
+  const nav = document.getElementById("bottom-nav");
+  const indicator = document.getElementById("nav-indicator");
+  if (!nav || !indicator) return;
+
+  // Only run on mobile where the pill dock is visible
+  if (window.innerWidth > 820) return;
+
+  const activeBtn = nav.querySelector(".bottom-nav-item.active:not(.bottom-nav-new)");
+  if (!activeBtn) return;
+
+  const navRect = nav.getBoundingClientRect();
+  const btnRect = activeBtn.getBoundingClientRect();
+
+  // Centre the indicator horizontally on the active button
+  const centreX = btnRect.left - navRect.left + btnRect.width / 2;
+  const x = Math.round(centreX - indicator.offsetWidth / 2);
+
+  indicator.style.transform = `translate(${x}px, -50%)`;
+
+  // Allow spring transition after first paint
+  if (indicator.classList.contains("no-transition")) {
+    requestAnimationFrame(() => {
+      indicator.classList.remove("no-transition");
+    });
+  }
 }
 
 function toast(message) {
