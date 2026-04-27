@@ -1566,6 +1566,27 @@ function mergeEntries(localEntries, cloudEntries) {
   return sortedEntries([...byId.values()]);
 }
 
+function exportAllAsText() {
+  const entries = sortedEntries(activeEntries());
+  if (!entries.length) { toast("No entries to export"); return; }
+  const lines = entries.map((e) => [
+    `# ${e.title}`,
+    `Type: ${e.type}${e.project ? `  |  Project: ${e.project}` : ""}${e.tags.length ? `  |  Tags: ${e.tags.join(", ")}` : ""}`,
+    `Date: ${formatDate(e.createdAt)}`,
+    "",
+    e.content,
+    "---"
+  ].join("\n"));
+  const blob = new Blob([lines.join("\n\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `memora-export-${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`Exported ${entries.length} entries`);
+}
+
 async function exportEntryAsPdf(id) {
   const entry = state.entries.find((item) => item.id === id);
   if (!entry) return;
@@ -1883,6 +1904,11 @@ document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-manage-projects]")) openProjectManager();
   if (event.target.closest("[data-open-more]")) openMoreSheet();
   if (event.target.closest("[data-close-more]")) closeMoreSheet();
+
+  if (event.target.closest("[data-export-all]")) {
+    exportAllAsText();
+    return;
+  }
   if (event.target.closest("[data-open-profile]")) { openProfileSheet(); return; }
   if (event.target.closest("[data-close-profile]")) { closeProfileSheet(); return; }
 
